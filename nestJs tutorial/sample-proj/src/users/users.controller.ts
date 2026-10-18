@@ -12,11 +12,21 @@ import {
   ValidationPipe,
   Put,
   Patch,
+  UseInterceptors,
+  UploadedFile,
+  ParseFilePipe,
+  MaxFileSizeValidator,
+  FileTypeValidator,
+  Res,
 } from '@nestjs/common';
 import { UsersService } from './users.service.js';
 import { CreateUserDto } from './dtos/create-user.dto.js';
 import { GetParamDto } from './dtos/get-param.dto.js';
 import { UpdateUserDto } from './dtos/update-user-partially.dto.js';
+import { FileInterceptor } from '@nestjs/platform-express';
+import multer, { diskStorage, memoryStorage } from 'multer';
+import { promises as fs } from 'fs';
+import type { Response } from 'express';
 
 @Controller('users')
 export class UsersController {
@@ -80,5 +90,42 @@ export class UsersController {
     console.log(user.isBangladeshi);
     console.log(user.password);
     return 'user updated partially';
+  }
+
+  @Post('upload-profile-pic')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: memoryStorage(),
+    }),
+  )
+  async uplodProfilePic(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({
+            fileType: /image\/jpeg/,
+          }),
+          new MaxFileSizeValidator({
+            maxSize: 2 * 1024 * 1024,
+          }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
+    const fileName = Date.now() + file.originalname;
+    const destination = './uploads';
+    const filePath = `${destination}/${fileName}`;
+
+    await fs.writeFile(filePath, file.buffer);
+
+    console.log(file.originalname);
+    console.log(file.size);
+    console.log(file.mimetype);
+  }
+
+  @Get('download-file/download/download')
+  downloadFile(@Query('fileName') fileName: string, @Res() res: Response) {
+    res.sendFile(fileName, { root: './uploads' });
   }
 }
