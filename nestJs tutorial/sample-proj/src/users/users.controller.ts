@@ -27,56 +27,49 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import multer, { diskStorage, memoryStorage } from 'multer';
 import { promises as fs } from 'fs';
 import type { Response } from 'express';
+import { Users } from './entities/Users.entity.js';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get(':id')
-  getUserById(@Param('id') id: GetParamDto) {
-    console.log(typeof id);
+  async getUserById(@Param('id') id: string) {
+    return await this.usersService.getUserById(id);
   }
 
   @Get()
-  getUser(@Query('data', new DefaultValuePipe(10)) data: any) {
-    console.log(typeof data);
-    console.log(data);
+  async getUser(@Query('data', new DefaultValuePipe(10)) data: any) {
+    return await this.usersService.getAllUsers();
   }
 
   @Delete(':id')
-  deleteUserById(
+  async deleteUserById(
     @Param('id')
-    id: any,
+    id: string,
   ) {
-    console.log(typeof id);
+    return await this.usersService.deleteUser(id);
+  }
+
+  @Delete('soft/soft/:id')
+  async deleteUserByIdSoft(
+    @Param('id')
+    id: string,
+  ) {
+    return await this.usersService.deleteUserSoft(id);
   }
 
   @Post('create-user')
-  createUser(@Body() user: CreateUserDto) {
-    console.log(user.id);
-    console.log(user.name);
-    console.log(user.age);
-    console.log(user.email);
-    console.log(user.address);
-    console.log(user.gender);
-    console.log(user.isBangladeshi);
-    console.log(user.password);
-    //console.log(user.isFootballer);
-
-    return 'user successfully created';
+  async createUser(@Body() user: CreateUserDto): Promise<Users> {
+    return await this.usersService.createUser(user);
   }
 
   @Put('updateUserFully/:id')
-  updateUserFully(@Param('id') id: string, @Body() user: UpdateUserDto) {
-    console.log(user.id);
-    console.log(user.name);
-    console.log(user.age);
-    console.log(user.email);
-    console.log(user.address);
-    console.log(user.gender);
-    console.log(user.isBangladeshi);
-    console.log(user.password);
-    return 'updated user fully';
+  async updateUserFully(
+    @Param('id') id: string,
+    @Body() user: UpdateUserDto,
+  ): Promise<Users | null | string | undefined> {
+    return await this.usersService.replaceUser(id, user);
   }
 
   @Patch('updateUserPartially/:id')
