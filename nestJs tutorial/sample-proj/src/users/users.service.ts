@@ -83,10 +83,33 @@ export class UsersService {
 
       const res = (await this.usersRepo.update(id, user)).affected;
       if (res != undefined && res > 0) {
-        console.log('meow');
         const user = await this.usersRepo.findOneBy({ id });
-        console.log(user);
         return `user updated with id ${id}`;
+      } else {
+        return `user with id ${id} not found`;
+      }
+    } catch {
+      throw new BadRequestException('User not Found');
+    }
+  }
+
+  async updateUser(
+    id: string,
+    user: UpdateUserDto,
+  ): Promise<undefined | Users | string> {
+    try {
+      const us = await this.usersRepo.findOne({
+        where: {
+          id: id,
+        },
+      });
+
+      const res = (await this.usersRepo.update(id, user)).affected;
+      if (res != undefined && res > 0) {
+        const user = await this.usersRepo.findOneBy({ id });
+        return `user updated with id ${id}`;
+      } else {
+        return `user with id ${id} not found`;
       }
     } catch {
       throw new BadRequestException('User not Found');

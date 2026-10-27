@@ -21,6 +21,7 @@ export class CreateUserDto {
   id: string;
   @IsString()
   @IsNotEmpty()
+  @MinLength(5)
   @MaxLength(100)
   name: string;
   @IsInt()

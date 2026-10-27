@@ -5,7 +5,12 @@ import {
   Entity,
   PrimaryColumn,
   UpdateDateColumn,
+  OneToOne,
+  OneToMany,
 } from 'typeorm';
+import type { Cars } from './../../cars/entities/cars.entity.js';
+import type { Passports } from '../../passports/entities/passports.entity.js';
+
 @Entity('users')
 export class Users {
   @PrimaryColumn({
@@ -56,6 +61,12 @@ export class Users {
     length: 20,
   })
   password: string;
+
+  @OneToOne('Passports', (passport: Passports) => passport.user)
+  passport: Passports;
+
+  @OneToMany('Cars', (cars: Cars) => cars.user)
+  cars: Cars[];
 
   @UpdateDateColumn()
   updateUser: Date;

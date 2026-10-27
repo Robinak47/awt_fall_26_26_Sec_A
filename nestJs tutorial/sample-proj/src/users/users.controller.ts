@@ -73,16 +73,11 @@ export class UsersController {
   }
 
   @Patch('updateUserPartially/:id')
-  updateUserPartially(@Param('id') id: string, @Body() user: UpdateUserDto) {
-    console.log(user.id);
-    console.log(user.name);
-    console.log(user.age);
-    console.log(user.email);
-    console.log(user.address);
-    console.log(user.gender);
-    console.log(user.isBangladeshi);
-    console.log(user.password);
-    return 'user updated partially';
+  async updateUserPartially(
+    @Param('id') id: string,
+    @Body() user: UpdateUserDto,
+  ): Promise<Users | null | string | undefined> {
+    return await this.usersService.updateUser(id, user);
   }
 
   @Post('upload-profile-pic')
