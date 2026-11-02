@@ -55,4 +55,8 @@ export class CreateUserDto {
       'password should have at least one lowercase, one upper case , one special char, one number and length should be between 8 to 20 char ',
   })
   password: string;
+
+  @IsNotEmpty()
+  @IsString()
+  role: string;
 }

@@ -58,7 +58,7 @@ export class Users {
   @Column({
     name: 'pass',
     type: 'varchar',
-    length: 20,
+    length: 2000,
   })
   password: string;
 
@@ -76,4 +76,7 @@ export class Users {
 
   @DeleteDateColumn()
   deleteUser: Date;
+
+  @Column()
+  role: string;
 }
