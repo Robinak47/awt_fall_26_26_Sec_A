@@ -5,10 +5,11 @@ import { UsersModule } from '../users/users.module.js';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtGuards } from './jwtGuards.js';
 import { JwtStrategy } from './jwtStrategy.strategy.js';
+import { RolesGuard } from './roles/roles/roles.guard.js';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, JwtGuards, JwtStrategy],
+  providers: [AuthService, JwtGuards, JwtStrategy, RolesGuard],
   imports: [
     UsersModule,
     JwtModule.register({
